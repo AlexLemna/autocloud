@@ -1,12 +1,14 @@
-from pathlib import Path
-import subprocess
-from ipaddress import ip_address, IPv6Address, IPv4Address
 import json
+import subprocess
+from ipaddress import IPv4Address, IPv6Address, ip_address
+from pathlib import Path
+
 from tokens import _helper
 
 #
 # General utils
 #
+
 
 def format_json(text: str | bytes | bytearray) -> str:
     """A convenience function that combines json.loads() and json.dumps()
@@ -16,24 +18,27 @@ def format_json(text: str | bytes | bytearray) -> str:
     pretty_contents = json.dumps(contents, indent=2)
     return pretty_contents
 
+
 def api_token(name: str | Path) -> str:
     """When given a name 'example', searches the ./tokens/ directory for
-    a matching file or 'example.txt' and returns the contents, stripping 
+    a matching file or 'example.txt' and returns the contents, stripping
     out comments and whitespaces.
     """
     token = _helper.get_token(name)
     return token
 
+
 #
-# Get our public IP address using OpenDNS 
+# Get our public IP address using OpenDNS
 #
+
 
 def ask_opendns_my_ip_str() -> str:
     call_dig = subprocess.Popen(
         "dig +short myip.opendns.com @resolver1.opendns.com",
         shell=True,
-        stdout=subprocess.PIPE
-        )
+        stdout=subprocess.PIPE,
+    )
     # There's a lot chained together in the next line, but all
     # it does is references the stdout captured from the subprocess,
     # looks at the stdout contents, and converts the contents from
@@ -43,6 +48,7 @@ def ask_opendns_my_ip_str() -> str:
     # so we should strip that out. Our IP is 192.0.2.1, not 192.0.2.1\n.
     my_ip = dig_response.strip()
     return my_ip
+
 
 def ask_opendns_my_ip() -> IPv6Address | IPv4Address:
     my_ip = ask_opendns_my_ip_str()

@@ -1,17 +1,19 @@
 from pathlib import Path
 
+
 def _find_token_dir() -> Path:
     """Returns the directory containing this file."""
     this_dir = Path(__file__).absolute().parent
     return this_dir
 
+
 def _find_token_file(file: Path | str) -> Path:
-    """Given a `file` which may be a relative path or simple filename, 
-    `_find_token_file` constructs an absolute filepath with a .txt extension 
-    and raises `FileNotFoundError` if it doesn't exist. Otherwise, it returns 
+    """Given a `file` which may be a relative path or simple filename,
+    `_find_token_file` constructs an absolute filepath with a .txt extension
+    and raises `FileNotFoundError` if it doesn't exist. Otherwise, it returns
     the filepath.
 
-    Examples: 
+    Examples:
     - `_find_token_file("foo")` looks for `foo.txt` in the token directory,
     - `_find_token_file("bar.txt")` looks for `bar.txt` in the token directory,
     - `_find_token_file(Path("foobar"))` looks for `foobar.txt` in the token
@@ -23,11 +25,11 @@ def _find_token_file(file: Path | str) -> Path:
             filepath = file.with_suffix(".txt")
         else:
             token_dir = _find_token_dir()
-            filepath = (token_dir / file.name).with_suffix(".txt") 
+            filepath = (token_dir / file.name).with_suffix(".txt")
     else:
         file = Path(file)
         filepath = _find_token_file(name=file)
-    
+
     if filepath.exists():
         return filepath
     else:
@@ -52,5 +54,3 @@ def get_token(file: Path | str):
         contents = f.readlines()
     token = _parse_token_file(contents)
     return token
-
-    
