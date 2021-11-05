@@ -95,7 +95,7 @@ class Vultr(_BaseAPI):
     def __init__(self) -> None:
         self.ACCESS_TOKEN = utils.api_token("vultr")
         self.AUTHORIZATION_HEADER = {"Authorization": f"Bearer {self.ACCESS_TOKEN}"}
-        self.BASE_URL = "https://api.vultr.com/v2/instances"
+        self.BASE_URL = "https://api.vultr.com/v2/"
         super().__init__(
             self.ACCESS_TOKEN,
             self.BASE_URL,
