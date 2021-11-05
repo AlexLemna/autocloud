@@ -1,0 +1,3 @@
+#!/bin/bash
+# call with command '. activate_venv'
+. venv/bin/activate

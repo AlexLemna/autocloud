@@ -1,0 +1,21 @@
+{
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.wordBasedSuggestions": false,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        "gitlens.codeLens.symbolScopes": [
+            // remove this if GitLens extension isn't installed
+            "!Module"
+        ],
+    },
+    // To find the paths for Python or Black, try the commands `which python` 
+    // or `which black` on Unix-y systems or `Get-Command Python` in Windows PowerShell.
+    // The path to Python in a venv is generally venv/bin/python
+    "python.defaultInterpreterPath": "/path/to/your/venv/Scripts/Python.exe or C:\\same\\path\\but\\on\\Windows",
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+}

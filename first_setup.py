@@ -8,7 +8,7 @@ VERBOSE_CONSOLE = False
 VERBOSE_LOGFILE = False
 
 REPO_DIR = Path(__file__).absolute().parent  # this file's directory
-
+LOG_DIR = (REPO_DIR / "logs")
 
 class SetupLogger(logging.Logger):
     FILE_RECORD_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -17,7 +17,9 @@ class SetupLogger(logging.Logger):
     def __init__(self, name: str = "root", level=DEBUG) -> None:
         super().__init__(name, level=level)
 
-        self._file = logging.FileHandler(f"{REPO_DIR}/first_setup.log")
+        LOG_DIR.mkdir(mode=0o755, parents=True, exist_ok=True)
+
+        self._file = logging.FileHandler(f"{LOG_DIR}/autocloud_setup.log")
         self._file.setFormatter(self.FILE_FORMATTER)
         if VERBOSE_LOGFILE is False:
             self._file.setLevel(INFO)
@@ -48,14 +50,18 @@ elif USER_LOCAL_BIN.is_file():
     log.critical("Cannot continue. Exiting.")
     raise FileExistsError
 
-ENTRY_FILE = USER_LOCAL_BIN / "autocloud"
+PATH_SYMLINK = USER_LOCAL_BIN / "autocloud"
+ENTRY_FILE = REPO_DIR / "autocloud.sh"
 MAIN_FILE = REPO_DIR / "main.py"
 
-log.info(f"Creating {ENTRY_FILE} ...")
-if ENTRY_FILE.exists():
-    log.critical(f"ERROR! {ENTRY_FILE} already exists.")
+log.info(f"Creating {PATH_SYMLINK} ...")
+try:
+    log.debug(f"Symlink {PATH_SYMLINK} will point to {ENTRY_FILE} ...")
+    PATH_SYMLINK.symlink_to(f"{ENTRY_FILE}")
+except FileExistsError as e:
+    log.critical(f"ERROR! {PATH_SYMLINK} already exists.")
     log.critical("Setup has already happened. Cannot continue. Exiting.")
-    raise FileExistsError
+    raise e
 
 with ENTRY_FILE.open(mode="w") as f:
     log.debug(f"Pointing {ENTRY_FILE} to {MAIN_FILE} ...")
