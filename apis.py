@@ -1,3 +1,6 @@
+import requests
+from requests import Response
+
 import utils
 
 STRICT_CHECKING = False
@@ -28,32 +31,43 @@ class _BaseAPI:
             else:
                 return self.base_url + text
 
-    def get(self, url: str):
-        url = self._get_url(url)
+    def get(self, url: str) -> Response:
+        _url = self._get_url(url)
+        _r = requests.get(url=_url, headers=self.headers)
+        return _r
 
-    def post(self, url: str, data: dict):
-        url = self._get_url(url)
+    def post(self, url: str, data: dict) -> Response:
+        _url = self._get_url(url)
+        _r = requests.post(url=_url, data=data, headers=self.headers)
+        return _r
 
-    def put(self, url: str, data: dict):
-        url = self._get_url(url)
+    def put(self, url: str, data: dict) -> Response:
+        _url = self._get_url(url)
+        _r = requests.put(url=_url, data=data, headers=self.headers)
+        return _r
 
-    def delete(self, url: str):
-        url = self._get_url(url)
+    def delete(self, url: str) -> Response:
+        _url = self._get_url(url)
+        _r = requests.delete(url=_url, headers=self.headers)
+        return _r
 
-    def head(self, url: str):
-        url = self._get_url(url)
+    def head(self, url: str) -> Response:
+        _url = self._get_url(url)
+        _r = requests.head(url=_url, headers=self.headers)
+        return _r
 
-    def options(self, url: str):
-        url = self._get_url(url)
+    def options(self, url: str) -> Response:
+        _url = self._get_url(url)
+        _r = requests.options(url=_url, headers=self.headers)
+        return _r
 
 
 class Cloudflare(_BaseAPI):
-    ACCESS_TOKEN = utils.api_token("cloudflare")
-    AUTHORIZATION_HEADER = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
-    CONTENT_TYPE_HEADER = {"Content-Type": "application/json"}
-    BASE_URL = "https://api.cloudflare.com/client/v4/"
-
     def __init__(self) -> None:
+        self.ACCESS_TOKEN = utils.api_token("cloudflare")
+        self.AUTHORIZATION_HEADER = {"Authorization": f"Bearer {self.ACCESS_TOKEN}"}
+        self.CONTENT_TYPE_HEADER = {"Content-Type": "application/json"}
+        self.BASE_URL = "https://api.cloudflare.com/client/v4/"
         super().__init__(
             self.ACCESS_TOKEN,
             self.BASE_URL,
@@ -61,17 +75,27 @@ class Cloudflare(_BaseAPI):
             self.CONTENT_TYPE_HEADER,
         )
 
+    def verify_token(self, print_results: bool = False) -> Response:
+        req_path = self.BASE_URL + "user/tokens/verify"
+        resp = self.get(req_path)
+        if print_results is True:
+            if resp.ok:
+                print("Cloudflare API key verified.")
+            else:
+                print("ERROR! Cloudflare API key NOT verified.")
+        return resp
+
 
 class Dynadot(_BaseAPI):
-    ACCESS_TOKEN = utils.api_token("dynadot")
+    def __init__(self) -> None:
+        self.ACCESS_TOKEN = utils.api_token("dynadot")
 
 
 class Vultr(_BaseAPI):
-    ACCESS_TOKEN = utils.api_token("vultr")
-    AUTHORIZATION_HEADER = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
-    BASE_URL = "https://api.vultr.com/v2/instances"
-
     def __init__(self) -> None:
+        self.ACCESS_TOKEN = utils.api_token("vultr")
+        self.AUTHORIZATION_HEADER = {"Authorization": f"Bearer {self.ACCESS_TOKEN}"}
+        self.BASE_URL = "https://api.vultr.com/v2/instances"
         super().__init__(
             self.ACCESS_TOKEN,
             self.BASE_URL,
