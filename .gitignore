@@ -1,4 +1,5 @@
 tokens/*  # don't want anyone to accidentally commit API tokens
+tokens/
 !tokens/README.md  # but this is just a README
 !tokens/_helper.py  # and this actually helps the program work
 !tokens/example.txt  # and this is just an example
