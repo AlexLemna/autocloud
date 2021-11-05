@@ -28,7 +28,7 @@ def _find_token_file(file: Path | str) -> Path:
             filepath = (token_dir / file.name).with_suffix(".txt")
     else:
         file = Path(file)
-        filepath = _find_token_file(name=file)
+        filepath = _find_token_file(file=file)
 
     if filepath.exists():
         return filepath
