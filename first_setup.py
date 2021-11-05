@@ -61,8 +61,13 @@ with ENTRY_FILE.open(mode="w") as f:
     log.debug(f"Pointing {ENTRY_FILE} to {MAIN_FILE} ...")
     lines = [
         "#!/bin/bash",
-        str(MAIN_FILE),
+        # Specifically not using a path below for Python so can be used
+        # with venv
+        f"python {MAIN_FILE}",
     ]
-    f.writelines(lines)
+    f.writelines("\n".join(line for line in lines) + "\n")
+
+log.debug(f"Making {ENTRY_FILE} executable ...")
+ENTRY_FILE.chmod(mode=0o740)
 
 log.info(f"Setup complete.")
