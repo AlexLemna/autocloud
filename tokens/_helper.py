@@ -33,6 +33,8 @@ def _find_token_file(file: Path | str) -> Path:
     if filepath.exists():
         return filepath
     else:
+        print(f"Looked for {filepath} but could not find it.")
+        print()
         raise FileNotFoundError
 
 
