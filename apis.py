@@ -7,6 +7,8 @@ STRICT_CHECKING = False
 
 
 class _BaseAPI:
+    NAME: str
+
     def __init__(
         self, token, base_url: str, auth_header: dict, *other_headers: dict
     ) -> None:
@@ -61,8 +63,19 @@ class _BaseAPI:
         _r = requests.options(url=_url, headers=self.headers)
         return _r
 
+    def _verify_token(self, url: str, print_results: bool = False) -> Response:
+        resp = self.get(url)
+        if print_results is True:
+            if resp.ok:
+                print(f"{self.NAME} API key verified.")
+            else:
+                print(f"ERROR! {self.NAME} API key NOT verified.")
+        return resp
+
 
 class Cloudflare(_BaseAPI):
+    NAME = "Cloudflare"
+
     def __init__(self) -> None:
         self.ACCESS_TOKEN = utils.api_token("cloudflare")
         self.AUTHORIZATION_HEADER = {"Authorization": f"Bearer {self.ACCESS_TOKEN}"}
@@ -77,21 +90,34 @@ class Cloudflare(_BaseAPI):
 
     def verify_token(self, print_results: bool = False) -> Response:
         req_path = self.BASE_URL + "user/tokens/verify"
-        resp = self.get(req_path)
-        if print_results is True:
-            if resp.ok:
-                print("Cloudflare API key verified.")
-            else:
-                print("ERROR! Cloudflare API key NOT verified.")
+        resp = self._verify_token(req_path, print_results=print_results)
         return resp
 
 
 class Dynadot(_BaseAPI):
+    NAME = "Dynadot"
+
     def __init__(self) -> None:
         self.ACCESS_TOKEN = utils.api_token("dynadot")
+        self.BASE_URL = f"https://api.dynadot.com/api3.xml?key={self.ACCESS_TOKEN}"
+        super().__init__(
+            self.ACCESS_TOKEN,
+            self.BASE_URL,
+            {},  # no headers
+        )
+
+    def verify_token(self, print_results: bool = False) -> Response:
+        # It doesn't seem like Dynadot has a specific 'verify token' API,
+        # but the 'account_info' API should serve our purpose. I can't
+        # imagine a case when a valid API key returns an invalid user account.
+        req_path = self.BASE_URL + "&command=account_info"
+        resp = self._verify_token(req_path, print_results=print_results)
+        return resp
 
 
 class Vultr(_BaseAPI):
+    NAME = "Vultr"
+
     def __init__(self) -> None:
         self.ACCESS_TOKEN = utils.api_token("vultr")
         self.AUTHORIZATION_HEADER = {"Authorization": f"Bearer {self.ACCESS_TOKEN}"}
@@ -101,3 +127,11 @@ class Vultr(_BaseAPI):
             self.BASE_URL,
             self.AUTHORIZATION_HEADER,
         )
+
+    def verify_token(self, print_results: bool = False) -> Response:
+        # It doesn't seem like Vultr has a specific 'verify token' API,
+        # but the 'account_info' API should serve our purpose. I can't
+        # imagine a case when a valid API key returns an invalid user account.
+        req_path = self.BASE_URL + "account"
+        resp = self._verify_token(req_path, print_results=print_results)
+        return resp
