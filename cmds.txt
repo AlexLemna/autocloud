@@ -1,0 +1,34 @@
+
+lac
+    config (changes current config)
+
+    run
+    show
+        config
+        config-defaults
+        logs
+        version
+    status
+
+    --plain (no linebreaks)
+    --json (display output as json)
+    --no-color
+
+    --password-file
+
+    -d, --debug
+    --log
+    -q, --quiet
+    --verbosity
+    --version
+
+FEEDBACK:
+    --log <level> <destination>
+    --verbosity <level>
+50  CRITICAL                            -qqq    critical-only
+40  ERROR                               -qq     errors
+30  WARNING                             -q      warnings
+20  INFO                                        
+10  DEBUG       DEBUG1                  -d      debug, debug1
+07              DEBUG2                  -dd
+04              DEBUG3      BLATHER     -ddd
