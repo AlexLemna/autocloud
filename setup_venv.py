@@ -2,6 +2,8 @@ import os
 import sys
 from pathlib import Path
 
+import venv
+
 CWD = Path(__file__).cwd()
 COMMON_VENV_NAMES = (".env", ".venv", "env", "venv", "ENV", "VENV")
 
